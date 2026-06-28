@@ -118,9 +118,12 @@ No installation or dependencies are required.
 * 📅 Display creation and last edited dates
 * 🌙 Dark/Light mode
 * 📤 Export notes as TXT or PDF
+* ↕️ Drag-and-drop note reordering
+* ⭐ Favorite notes for quick access
 * ☁️ Cloud synchronization
 * 📱 Progressive Web App (PWA)
 * ✏️ Rich text editing support
+* 📂 Archive notes without deleting them
 
 ---
 
