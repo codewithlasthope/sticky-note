@@ -7,20 +7,64 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="notes">
-            <div id="add-note"><img src="screenshots/add.png" alt="Add Note"></div>
-        </div>
+    <div class="app">
+
+        <header class="header">
+            <h1 class="logo">Sticky Notes</h1>
+
+            <div class="header-actions">
+                <button class="icon-btn" id="theme-toggle">🌙</button>
+                <button class="icon-btn">⚙️</button>
+            </div>
+        </header>
+
+        <section class="toolbar">
+
+            <div class="toolbar-left">
+                <input class="search-input" placeholder="Search notes..." />
+            </div>
+
+            <div class="toolbar-center">
+                <select class="filter-select">
+                    <option value="all">All</option>
+                    <option value="pinned">Pinned</option>
+                    <option value="favorites">Favorites</option>
+                    <option value="archived">Archived</option>
+                </select>
+
+                <select class="sort-select">
+                    <option value="updated">Last Updated</option>
+                    <option value="created">Created</option>
+                    <option value="title">Title</option>
+                </select>
+            </div>
+
+            <div class="toolbar-right">
+                <button class="add-btn">+ Add</button>
+            </div>
+
+        </section>
+
+        <main class="main">
+
+            <section class="notes-grid">
+
+                <article class="card add-card" id="add-note">
+                    <div class="add-card-icon">+</div>
+                    <p>New Note</p>
+                </article>
+
+            </section>
+
+        </main>
 
     </div>
-    <script src="js/render.js"></script>
-    <script src="js/app.js"></script>
+
+    <script src="js/utils.js"></script>
     <script src="js/storage.js"></script>
     <script src="js/notes.js"></script>
-    <script src="js/search.js"></script>
-    <script src="js/theme.js"></script>
-    <script src="js/export.js"></script>
-    <script src="js/drag.js"></script>
-    <script src="js/utils.js"></script>
+    <script src="js/render.js"></script>
+
+    <script src="js/app.js"></script>
 </body>
 </html>
