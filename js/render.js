@@ -26,23 +26,54 @@ const Render = {
         el.classList.add('note')
         el.dataset.id = note.id
 
-        el.addEventListener('keydown', (e)=> {
-            if (e.key === 'Enter') {
-                e.preventDefault()
-                textarea.blur()
-            }
-        })
-
         
+        const header = document.createElement('header');
+        header.classList.add('note-header')
+
+        const title = document.createElement('input');
+        title.type = 'text'
+        title.placeholder = 'Untitled'
+        title.classList.add('note-title')
+        title.value = note.title
+
+        const actions = document.createElement('div')
+        actions.classList.add('note-actions')
+
+        const noteBody = document.createElement('section')
+        noteBody.classList.add('note-body')
+
         const textarea = document.createElement('textarea')
         textarea.classList.add('note-content')
         textarea.value = note.content
 
+        noteBody.appendChild(textarea)
+
         const footer = document.createElement('div')
         footer.classList.add('note-footer')
-        footer.textContent = 'Double click to delete'
         
-        el.append(textarea, footer)
+        const noteMeta = document.createElement('div')
+        noteMeta.classList.add('note-meta')
+        
+        const createdAt = document.createElement('small')
+        createdAt.textContent = `Created: ${formatDate(note.createdAt)}`
+        
+        const updatedAt = document.createElement('small')
+        updatedAt.classList.add('note-updated')
+        updatedAt.textContent = `Updated: ${formatTime(note.updatedAt)}`
+
+        const noteStats = document.createElement('div')
+        noteStats.classList.add('note-stats')
+
+        const characters = document.createElement('small')
+        characters.classList.add('note-characters')
+        characters.textContent = `${note.content.length} Characters`
+
+        noteMeta.append(createdAt, updatedAt)
+        noteStats.appendChild(characters)
+        header.append(title, actions)
+        footer.append(noteMeta, noteStats)
+
+        el.append(header, noteBody, footer)
 
         return el
     },
@@ -72,5 +103,25 @@ const Render = {
             <p>Click the <strong>Add Note</strong> card to create your first note</p>
         `
         return empty
+    },
+
+    updateUpdatedAtDOM(id, updatedAt) {
+        const article = document.querySelector(`[data-id="${id}"]`);
+        if (!article) return
+
+        const updatedEl = article.querySelector(".note-updated");
+        if (!updatedEl) return
+
+        updatedEl.textContent = `Updated: ${formatTime(updatedAt)}`
+    },
+
+    updateCharacterCount(id, length) {
+        const article = document.querySelector(`[data-id='${id}']`)
+        if (!article) return
+
+        const updateChar = article.querySelector('.note-characters')
+        if (!updateChar) return
+
+        updateChar.textContent = `${note.content.length} Characters`
     }
 }
