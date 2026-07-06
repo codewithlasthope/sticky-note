@@ -22,60 +22,90 @@ const Render = {
     },
 
     renderNote(note) {
-        const el = document.createElement('article')
-        el.classList.add('note')
-        el.dataset.id = note.id
 
-        
+        const el = document.createElement('article');
+        el.classList.add('note');
+        el.dataset.id = note.id;
+
+        // STATE CLASSES
+        if (note.pinned) el.classList.add("is-pinned");
+        if (note.favourites) el.classList.add("is-favourite");
+        if (note.archived) el.classList.add("is-archived");
+
+        // HEADER
         const header = document.createElement('header');
-        header.classList.add('note-header')
+        header.classList.add('note-header');
 
         const title = document.createElement('input');
-        title.type = 'text'
-        title.placeholder = 'Untitled'
-        title.classList.add('note-title')
-        title.value = note.title
+        title.type = 'text';
+        title.placeholder = 'Untitled';
+        title.classList.add('note-title');
+        title.value = note.title || '';
 
-        const actions = document.createElement('div')
-        actions.classList.add('note-actions')
+        const actions = document.createElement('div');
+        actions.classList.add('note-actions');
 
-        const noteBody = document.createElement('section')
-        noteBody.classList.add('note-body')
+        const pinned = document.createElement('button');
+        pinned.classList.add('note-pin');
+        pinned.textContent = note.pinned ? "📌" : "📍";
 
-        const textarea = document.createElement('textarea')
-        textarea.classList.add('note-content')
-        textarea.value = note.content
+        const favourite = document.createElement('button');
+        favourite.classList.add('note-fav');
+        favourite.textContent = note.favourites ? "⭐" : "☆";
 
-        noteBody.appendChild(textarea)
+        const archived = document.createElement('button');
+        archived.classList.add('note-archive');
+        archived.textContent = note.archived ? "📦" : "📂";
 
-        const footer = document.createElement('div')
-        footer.classList.add('note-footer')
-        
-        const noteMeta = document.createElement('div')
-        noteMeta.classList.add('note-meta')
-        
-        const createdAt = document.createElement('small')
-        createdAt.textContent = `Created: ${formatDate(note.createdAt)}`
-        
-        const updatedAt = document.createElement('small')
-        updatedAt.classList.add('note-updated')
-        updatedAt.textContent = `Updated: ${formatTime(note.updatedAt)}`
+        const del = document.createElement('button');
+        del.classList.add('note-delete');
+        del.textContent = '🗑️';
 
-        const noteStats = document.createElement('div')
-        noteStats.classList.add('note-stats')
+        actions.append(pinned, favourite, archived, del);
 
-        const characters = document.createElement('small')
-        characters.classList.add('note-characters')
-        characters.textContent = `${note.content.length} Characters`
+        header.append(title, actions);
 
-        noteMeta.append(createdAt, updatedAt)
-        noteStats.appendChild(characters)
-        header.append(title, actions)
-        footer.append(noteMeta, noteStats)
+        // BODY
+        const body = document.createElement('section');
+        body.classList.add('note-body');
 
-        el.append(header, noteBody, footer)
+        const textarea = document.createElement('textarea');
+        textarea.classList.add('note-content');
+        textarea.value = note.content || '';
 
-        return el
+        body.appendChild(textarea);
+
+        // FOOTER
+        const footer = document.createElement('footer');
+        footer.classList.add('note-footer');
+
+        const meta = document.createElement('div');
+        meta.classList.add('note-meta');
+
+        const createdAt = document.createElement('small');
+        createdAt.textContent = `Created: ${formatDate(note.createdAt)}`;
+
+        const updatedAt = document.createElement('small');
+        updatedAt.classList.add('note-updated');
+        updatedAt.textContent = `Updated: ${formatTime(note.updatedAt)}`;
+
+        meta.append(createdAt, updatedAt);
+
+        const stats = document.createElement('div');
+        stats.classList.add('note-stats');
+
+        const characters = document.createElement('small');
+        characters.classList.add('note-characters');
+        characters.textContent = `${(note.content || '').length} Characters`;
+
+        stats.appendChild(characters);
+
+        footer.append(meta, stats);
+
+        // ASSEMBLY
+        el.append(header, body, footer);
+
+        return el;
     },
 
     clear() {
@@ -115,13 +145,25 @@ const Render = {
         updatedEl.textContent = `Updated: ${formatTime(updatedAt)}`
     },
 
-    updateCharacterCount(id, length) {
+    updateCharacterCount(id, count) {
         const article = document.querySelector(`[data-id='${id}']`)
         if (!article) return
 
         const updateChar = article.querySelector('.note-characters')
         if (!updateChar) return
 
-        updateChar.textContent = `${note.content.length} Characters`
+        updateChar.textContent = `${count} Characters`
+    },
+
+    updateWorkspaceCounts(notes) {
+
+        const activeCount = notes.filter(note => !note.archived).length;
+        const archiveCount = notes.filter(note => note.archived).length;
+
+        const notesCountEl = document.querySelector(".notes-count");
+        const archiveCountEl = document.querySelector(".archive-count");
+
+        notesCountEl.textContent = `(${activeCount})`;
+        archiveCountEl.textContent = `(${archiveCount})`;
     }
 }

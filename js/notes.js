@@ -6,7 +6,7 @@ const Notes = {
             content: "",
             color: "default",
             pinned: false,
-            favorite: false,
+            favourites: false,
             archived: false,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()

@@ -1,6 +1,7 @@
 const App = {
     state: {
         notes: [],
+        currentView: 'notes',
         searchQuery: '',
         filter: 'all',
         sort: 'updated'
@@ -10,13 +11,32 @@ const App = {
     init() {
         this.state.notes = Storage.load()
 
-        Render.renderNotes(this.state.notes);
+        this.sync()
         
         const DOM = {
             grid: document.querySelector(".notes-grid"),
             addButton: document.getElementById("add-note"),
-            searchBar: document.querySelector('.search-input')
+            searchBar: document.querySelector('.search-input'),
+            sortSelect: document.querySelector('.sort-select'),
+            filterSelect: document.querySelector('.filter-select'),
+            workSpaceBtn: document.querySelectorAll('.workspace-btn'),
+            archiveView: document.querySelector('[data-view="archive"]')
         };
+
+        // workspace toggle
+        DOM.workSpaceBtn.forEach(button => {
+            button.addEventListener('click', ()=> {
+                this.state.currentView = button.dataset.view
+
+                DOM.workSpaceBtn.forEach(btn => 
+                    btn.classList.remove('active')
+                )
+            
+                button.classList.add('active')
+
+                this.sync()
+            })
+        })
 
         // search event
         DOM.searchBar.addEventListener('input', (e)=> {
@@ -24,7 +44,18 @@ const App = {
 
             this.sync()
         })
- 
+        // sort event
+        DOM.sortSelect.addEventListener('change', (e)=> {
+            this.state.sort = e.target.value
+
+            this.sync()
+        })
+        // filter event
+        DOM.filterSelect.addEventListener('change', (e)=> {
+            this.state.filter = e.target.value
+            this.sync()
+        })
+
         // add note
         DOM.grid.addEventListener('click', (e)=> {
             const addCard = e.target.closest('.add-card')
@@ -43,9 +74,42 @@ const App = {
             e.target.blur()
         })
         
+        // note actions 
+        DOM.grid.addEventListener('click', (e)=> {
+            console.log('clicked', e.target)
+            const article = e.target.closest('.note')
+            if (!article) return
 
-        // delete note
-        
+            const id = article.dataset.id
+
+            const note = this.state.notes.find(n => n.id === id)
+
+            if (e.target.classList.contains('note-pin')) {
+                this.updateNote(id, {
+                    pinned: !note.pinned
+                })
+                this.sync()
+            }
+
+            if (e.target.classList.contains('note-fav')) {
+                this.updateNote(id, {
+                    favourites: !note.favourites
+                })
+                this.sync()
+            }
+
+            if (e.target.classList.contains('note-archive')) {
+                this.updateNote(id, {
+                    archived: !note.archived
+                })
+                this.sync()
+            }
+
+            if (e.target.classList.contains('note-delete')) {
+                this.deleteNote(id);
+            }
+        })
+
 
         // update note
         DOM.grid.addEventListener('input', (e)=> {
@@ -73,20 +137,27 @@ const App = {
     sync() {
         Storage.save(this.state.notes);
 
-        const visibleNotes = Search.filter(
+        let visibleNotes = Workspace.filter(
             this.state.notes,
+            this.state.currentView
+        )
+        
+        visibleNotes = Search.filter(
+            visibleNotes,
             this.state.searchQuery
         )
+        
+        visibleNotes = Sort.sort(
+            visibleNotes,
+            this.state.sort
+        )
 
-        const visibleNotes = Filter.filter(
+        visibleNotes = Filter.filter(
             visibleNotes,
             this.state.filter
         )
 
-        const visibleNotes = Sort.sort(
-            visibleNotes,
-            this.state.sort
-        )
+        Render.updateWorkspaceCounts(this.state.notes);
 
         Render.renderNotes(visibleNotes);
     },  
