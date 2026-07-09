@@ -25,7 +25,12 @@ const Render = {
 
         const el = document.createElement('article');
         el.classList.add('note');
+        el.classList.add('note-enter')
         el.dataset.id = note.id;
+
+        requestAnimationFrame(()=> {
+            el.classList.add('note-enter-active')
+        })
 
         // STATE CLASSES
         if (note.pinned) el.classList.add("is-pinned");
@@ -47,14 +52,17 @@ const Render = {
 
         const pinned = document.createElement('button');
         pinned.classList.add('note-pin');
+        pinned.classList.toggle('active', note.pinned)
         pinned.textContent = note.pinned ? "📌" : "📍";
 
         const favourite = document.createElement('button');
         favourite.classList.add('note-fav');
+        favourite.classList.toggle('active', note.favourites)
         favourite.textContent = note.favourites ? "⭐" : "☆";
 
         const archived = document.createElement('button');
         archived.classList.add('note-archive');
+        archived.classList.toggle('active', note.archived)
         archived.textContent = note.archived ? "📦" : "📂";
 
         const del = document.createElement('button');
@@ -165,5 +173,17 @@ const Render = {
 
         notesCountEl.textContent = `(${activeCount})`;
         archiveCountEl.textContent = `(${archiveCount})`;
+    },
+
+    animateDelete(id, callback) {
+        const article = document.querySelector(`[data-id="${id}"]`)
+        if (!article) return
+
+        article.classList.add('note-exit')
+
+        setTimeout(() => {
+            console.log('callback')
+            callback()
+        }, 250);
     }
 }

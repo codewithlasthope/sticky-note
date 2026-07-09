@@ -9,6 +9,10 @@ const App = {
 
     
     init() {
+        Theme.init()
+
+        Toast.init()
+        
         this.state.notes = Storage.load()
 
         this.sync()
@@ -20,8 +24,16 @@ const App = {
             sortSelect: document.querySelector('.sort-select'),
             filterSelect: document.querySelector('.filter-select'),
             workSpaceBtn: document.querySelectorAll('.workspace-btn'),
-            archiveView: document.querySelector('[data-view="archive"]')
+            archiveView: document.querySelector('[data-view="archive"]'),
+            themeBtn: document.getElementById('theme-toggle')
         };
+
+        // theme toggle
+        DOM.themeBtn.addEventListener('click', ()=> {
+            Theme.toggle()
+
+            Toast.show('Theme changed')
+        })
 
         // workspace toggle
         DOM.workSpaceBtn.forEach(button => {
@@ -88,25 +100,52 @@ const App = {
                 this.updateNote(id, {
                     pinned: !note.pinned
                 })
+                
                 this.sync()
+                Toast.show(
+                    note.pinned
+                    ? "📍 Removed from pinned"
+                    : "📌 Note pinned",
+                    'success'
+                );
             }
 
             if (e.target.classList.contains('note-fav')) {
                 this.updateNote(id, {
                     favourites: !note.favourites
                 })
+
                 this.sync()
+                Toast.show(
+                    note.favourites
+                    ? "☆ Removed from favorites"
+                    : "⭐ Added to favorites", 
+                    'success'
+                );
             }
 
             if (e.target.classList.contains('note-archive')) {
                 this.updateNote(id, {
                     archived: !note.archived
                 })
+
                 this.sync()
+
+                Toast.show(
+                    note.archived 
+                    ? "📂 Note restored"
+                    : "📦 Note archived",
+                    'success'
+                );
             }
 
+            // delete note
             if (e.target.classList.contains('note-delete')) {
-                this.deleteNote(id);
+                Render.animateDelete(id, ()=> {
+                    this.deleteNote(id);
+
+                    Toast.show('Note deleted successfully', 'success')
+                })
             }
         })
 
@@ -136,7 +175,7 @@ const App = {
 
     sync() {
         Storage.save(this.state.notes);
-
+        
         let visibleNotes = Workspace.filter(
             this.state.notes,
             this.state.currentView
@@ -168,6 +207,8 @@ const App = {
         this.state.notes.push(note)
 
         this.sync()
+
+        Toast.show("📝 New note created", 'success');
     },
 
     deleteNote(id) {

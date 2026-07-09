@@ -5,6 +5,7 @@
     --primary-color: #4F46E5;
     --text-color: #1F2937;
     --border-color: #E5E7EB;
+    --pinned-border-color: #facc15;
 
     /* Effects */
     --normal-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -80,7 +81,7 @@ body {
     border-radius: 50%;
 
     background: var(--surface-color);
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-color);
     cursor: pointer;
     transition: var(--transition);
     display: flex;
@@ -91,7 +92,7 @@ body {
 
 .icon-btn:hover {
     background: var(--primary-color);
-    color: white;
+    color: var(--surface-color);
 }
 
 .icon-btn:active {
@@ -163,7 +164,7 @@ body {
     border-radius: var(--border-radius);
 
     background: var(--primary-color);
-    color: white;
+    color: var(--surface-color);
 
     cursor: pointer;
 
@@ -204,6 +205,30 @@ body {
 
     display: flex;
     flex-direction: column;
+    transition:
+        transform .25s ease,
+        opacity .25s ease,
+        box-shadow .25s ease;
+}
+
+.note:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--hover-shadow);
+}
+
+.note-enter {
+    opacity: 0;
+    transform: translateY(16px);
+}
+
+.note-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.note-exit {
+    opacity: 0;
+    transform: scale(.95);
 }
 
 .add-card {
@@ -276,12 +301,12 @@ body {
 }
 
 .note-title::placeholder {
-    color: #9CA3AF;
+    color: var(--muted-color);
 }
 
 .note-actions {
     display: flex;
-    gap: 6px;
+    gap: 5px;
     flex-shrink: 0;
 }
 
@@ -289,7 +314,25 @@ body {
     background: transparent;
     border: none;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 15px;
+    padding: 2px;
+    border-radius: 6px;
+    transition: transform .2s ease,
+                background .2s ease;
+}
+
+.note-actions button:hover {
+    background: rgba(0,0,0,.08);
+    transform: translateY(-2px);
+}
+
+.note-actions button:active {
+    transform: scale(.9);
+}
+
+.note-actions button.active {
+    background: var(--primary-color);
+    color: var(--primary-text);
 }
 
 .note-body {
@@ -321,7 +364,7 @@ body {
     padding-top: var(--spacing-sm);
 
     font-size: 12px;
-    color: #6B7280;
+    color: var(--muted-color);
 }
 
 .note-meta {
@@ -349,7 +392,7 @@ body {
     border: 2px dashed var(--border-color);
     border-radius: var(--border-radius);
 
-    color: #6B7280;
+    color: var(--muted-color);
     text-align: center;
 }
 
@@ -368,16 +411,16 @@ body {
     filter: grayscale(0.3);
 }
 
-.is-archived textarea {
-    /* pointer-events: none; */
-}
+/* .is-archived textarea {
+    pointer-events: none;
+} */
 
 .is-pinned {
-    border: 2px solid #facc15;
+    border: 2px solid var(--pinned-border-color);
 }
 
 .is-favorite {
-    box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.3);
+    box-shadow: 0 0 0 2px var(--normal-shadow);
 }
 
 .workspace-nav {
@@ -400,20 +443,104 @@ body {
 
     cursor: pointer;
 
-    transition: .2s;
+    transition: var(--transition);
 }
 
 .workspace-btn:hover {
     background: var(--primary-color);
-    color: white;
+    color: var(--surface-color);
 }
 
 .workspace-btn.active {
 
     background: var(--primary-color);
 
-    color: white;
+    color: var(--surface-color);
 
     border-color: var(--primary-color);
 }
 
+[data-theme="dark"] {
+
+    --bg-color: #111827;
+    --surface-color: #1F2937;
+
+    --text-color: #F9FAFB;
+    --muted-color: #9CA3AF;
+
+    --border-color: #374151;
+
+    --primary-color: #818CF8;
+
+    --shadow-color: rgba(0,0,0,0.4);
+    --pinned-border-color: #FBBF24;
+    
+}
+
+#toast-container {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    z-index: 999;
+    pointer-events: none;
+}
+
+.toast {
+    min-width: 260px;
+    max-width: 360px;
+
+    padding: 14px 18px;
+
+    border-radius: var(--border-radius);
+
+    background: var(--surface-color);
+    color: var(--text-color);
+
+    border-left: 4px solid var(--primary-color);
+
+    box-shadow: var(--shadow);
+
+    font-size: 14px;
+    font-weight: 500;
+
+    pointer-events: auto;
+
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity .25s ease,
+                transform .25s ease;
+}
+
+.toast:hover {
+    transform: translateY(-2px);
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast.info {
+    border-left-color: #3B82F6;
+}
+
+.toast.success {
+    border-left-color: #22C55E;
+}
+
+.toast.warning {
+    border-left-color: #F59E0B;
+}
+
+.toast.error {
+    border-left-color: #EF4444;
+}
+
+@media (max-width: 768px) {
+
+}
