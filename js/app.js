@@ -2,6 +2,7 @@ const App = {
     state: {
         notes: [],
         currentView: 'notes',
+        selectedNote: null,
         searchQuery: '',
         filter: 'all',
         sort: 'updated'
@@ -25,8 +26,19 @@ const App = {
             filterSelect: document.querySelector('.filter-select'),
             workSpaceBtn: document.querySelectorAll('.workspace-btn'),
             archiveView: document.querySelector('[data-view="archive"]'),
-            themeBtn: document.getElementById('theme-toggle')
+            themeBtn: document.getElementById('theme-toggle'),
         };
+        
+        // escaoe key support
+        document.addEventListener("keydown", (e)=> {
+
+            if (e.key === "Escape") {
+
+                console.log("Escape pressed");
+
+            }
+
+        });
 
         // theme toggle
         DOM.themeBtn.addEventListener('click', ()=> {
@@ -141,6 +153,10 @@ const App = {
 
             // delete note
             if (e.target.classList.contains('note-delete')) {
+                const confrimDelete = confirm('Delete this note?')
+
+                if (!confrimDelete) return
+                
                 Render.animateDelete(id, ()=> {
                     this.deleteNote(id);
 

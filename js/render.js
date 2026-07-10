@@ -11,8 +11,33 @@ const Render = {
         grid.appendChild(this.renderAddCard())
 
         if (notes.length === 0) {
-            grid.appendChild(this.renderEmptyState())
-            return
+
+            let message = "";
+            let description = "";
+
+            if (App.state.searchQuery) {
+
+                message = "🔍 No results";
+                description = "Try another search.";
+
+            } else if (App.state.currentView === "archive") {
+
+                message = "📦 Archive is empty";
+                description = "Archived notes will appear here.";
+
+            } else {
+
+                message = "📝 No notes yet";
+                description = "Create your first note.";
+
+            }
+
+
+            grid.append(
+                this.renderEmptyState(message, description)
+            );
+
+            return;
         }
 
         notes.forEach(note => {
@@ -132,17 +157,6 @@ const Render = {
         return card
     },
 
-    renderEmptyState() {
-        const empty = document.createElement('div')
-        empty.classList.add('empty-state')
-
-        empty.innerHTML = `
-            <h2>No notes yet</h2>
-            <p>Click the <strong>Add Note</strong> card to create your first note</p>
-        `
-        return empty
-    },
-
     updateUpdatedAtDOM(id, updatedAt) {
         const article = document.querySelector(`[data-id="${id}"]`);
         if (!article) return
@@ -185,5 +199,17 @@ const Render = {
             console.log('callback')
             callback()
         }, 250);
+    },
+
+    renderEmptyState(message, description) {
+        const el = document.createElement('div')
+
+        el.classList.add('empty-state')
+
+        el.innerHTML = `
+            <h2>${message}</h2>
+            <h2>${description}</h2>
+        `
+        return el
     }
 }
